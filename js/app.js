@@ -15,6 +15,20 @@ let cancionActual = null; // id
 let picosPorPista = new Map();
 let cargaId = 0;
 
+// ---------------------------------------------------------------- paleta
+// Tonos de negro, rosa y blanco (identidad sebastrail.com). Los instrumentos
+// alternan tinta y rosa; las guías y la mezcla de referencia van en grises claros.
+const PALETA_INSTRUMENTOS = ['#1a1a1a', '#b76478', '#4a4043', '#d48a9e', '#7a6d70', '#8e3f57'];
+const PALETA_GRUPO = { 'Guías': '#c9bcbc', 'Referencia': '#9a8f91' };
+
+function asignarColores(pistas) {
+  let i = 0;
+  return pistas.map(p => ({
+    ...p,
+    color: p.color || PALETA_GRUPO[p.grupo] || PALETA_INSTRUMENTOS[i++ % PALETA_INSTRUMENTOS.length],
+  }));
+}
+
 // ---------------------------------------------------------------- utilidades
 const formatear = (s) => {
   if (!isFinite(s)) s = 0;
@@ -86,7 +100,7 @@ async function abrirCancion(id) {
 
   try {
     await motor.cargar(
-      d.pistas.map(p => ({ ...p, url: new URL(p.archivo, new URL(c.base, location.href)).href })),
+      asignarColores(d.pistas).map(p => ({ ...p, url: new URL(p.archivo, new URL(c.base, location.href)).href })),
       (f, texto) => {
         if (mio !== cargaId) return;
         $('#carga-relleno').style.width = `${(f * 100).toFixed(1)}%`;
