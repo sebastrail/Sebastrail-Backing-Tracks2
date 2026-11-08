@@ -1,7 +1,14 @@
 {
   "proyecto": "Repertorio",
   "descripcion": "Canciones con stems separados para ensayar: aísla, silencia y recorre cada pista.",
-  "canciones": [
-    "703-prueba-claude"
+  "secciones": [
+    {
+      "nombre": "Originales",
+      "canciones": ["ai", "friends", "contrastes", "venus", "little-red-sunshine", "703-prueba-claude"]
+    },
+    {
+      "nombre": "Arreglos",
+      "canciones": ["flood"]
+    }
   ]
 }
