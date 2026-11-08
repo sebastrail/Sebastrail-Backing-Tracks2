@@ -92,6 +92,7 @@ a { color: inherit; }
 .catalogo-titulo h2 { margin: 0; font-size: 26px; font-weight: 700; }
 .catalogo-titulo span { color: var(--texto-2); font-size: 13px; }
 .lista-canciones { list-style: none; padding: 0; margin: 0; display: grid; gap: 10px; }
+.seccion-catalogo + .seccion-catalogo { margin-top: 34px; }
 .tarjeta {
   display: flex; gap: 18px; align-items: center; padding: 14px 22px 14px 14px; border-radius: 999px;
   background: rgba(232, 220, 217, .55); text-decoration: none; transition: background .15s, transform .15s;
