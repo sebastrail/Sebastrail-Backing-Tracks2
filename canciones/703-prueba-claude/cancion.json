@@ -1,0 +1,63 @@
+{
+  "titulo": "703",
+  "subtitulo": "Prueba Claude",
+  "artista": "",
+  "tonalidad": "",
+  "bpm": null,
+  "duracion": 383.33,
+  "notas": "Primera prueba del reproductor multipista.",
+  "pistas": [
+    {
+      "id": "trompeta",
+      "nombre": "Trompeta",
+      "archivo": "../../trompeta.m4a",
+      "color": "#f5a524",
+      "grupo": "Instrumentos"
+    },
+    {
+      "id": "guitarra",
+      "nombre": "Guitarra eléctrica",
+      "archivo": "../../guitarra-electrica.m4a",
+      "color": "#ef5b5b",
+      "grupo": "Instrumentos"
+    },
+    {
+      "id": "piano",
+      "nombre": "Piano",
+      "archivo": "../../piano.m4a",
+      "color": "#5b8def",
+      "grupo": "Instrumentos"
+    },
+    {
+      "id": "bajo",
+      "nombre": "Bajo (MIDI)",
+      "archivo": "../../bajo.m4a",
+      "color": "#a374f2",
+      "grupo": "Instrumentos"
+    },
+    {
+      "id": "metronomo",
+      "nombre": "Metrónomo",
+      "archivo": "../../metronomo.m4a",
+      "color": "#8a94a6",
+      "grupo": "Guías",
+      "mute": true
+    },
+    {
+      "id": "cue",
+      "nombre": "Cues",
+      "archivo": "../../cue.m4a",
+      "color": "#6fbf9a",
+      "grupo": "Guías",
+      "mute": true
+    },
+    {
+      "id": "mezcla",
+      "nombre": "Mezcla completa",
+      "archivo": "../../mezcla.m4a",
+      "color": "#d9d9d9",
+      "grupo": "Referencia",
+      "mute": true
+    }
+  ]
+}
