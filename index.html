@@ -3,44 +3,84 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Repertorio</title>
-  <meta name="description" content="Catálogo de canciones con stems para ensayar: mute, solo y transporte por pista.">
-  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%23f5a524'/%3E%3Cg fill='%23161616'%3E%3Crect x='7' y='12' width='3' height='8' rx='1.5'/%3E%3Crect x='12' y='7' width='3' height='18' rx='1.5'/%3E%3Crect x='17' y='10' width='3' height='12' rx='1.5'/%3E%3Crect x='22' y='14' width='3' height='4' rx='1.5'/%3E%3C/g%3E%3C/svg%3E">
+  <title>Repertorio · Sebastrail</title>
+  <meta name="description" content="Repertorio de Sebastrail: canciones con stems para ensayar, con mute, solo y transporte por pista.">
+  <meta name="theme-color" content="#ffffff">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='16' fill='%23fae8ed'/%3E%3Cpath d='M18 5 10 18h6l-2 9 8-13h-6z' fill='%23b76478'/%3E%3C/svg%3E">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Jost:wght@400;500;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/estilos.css">
 </head>
 <body>
+  <!-- Flor de cerezo reutilizable -->
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+    <symbol id="sakura" viewBox="-50 -50 100 100">
+      <g fill="currentColor">
+        <path id="petalo" d="M0 -6 C -14 -16 -16 -34 -8 -44 L 0 -38 L 8 -44 C 16 -34 14 -16 0 -6 Z"/>
+        <use href="#petalo" transform="rotate(72)"/>
+        <use href="#petalo" transform="rotate(144)"/>
+        <use href="#petalo" transform="rotate(216)"/>
+        <use href="#petalo" transform="rotate(288)"/>
+      </g>
+      <circle r="5" fill="#e7a3b6"/>
+    </symbol>
+  </svg>
+
   <header class="barra-superior">
-    <a href="#/" class="marca" aria-label="Ir al catálogo">
-      <span class="marca-icono" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
-      <span id="nombre-proyecto">Repertorio</span>
+    <a href="#/" class="marca" aria-label="Repertorio de Sebastrail: ir al catálogo">
+      <img src="img/logo.png" alt="Sebastrail" width="161" height="15">
+      <span class="marca-separador" aria-hidden="true"></span>
+      <span class="marca-texto" id="nombre-proyecto">Repertorio</span>
     </a>
-    <span class="barra-ayuda">Espacio: play/pausa · ← → ±5 s · Inicio: volver al principio</span>
+    <nav class="barra-enlaces">
+      <span class="barra-ayuda">Espacio: play/pausa · ← → ±5 s</span>
+      <a href="#/">Catálogo</a>
+      <a href="https://sebastrail.com" target="_blank" rel="noopener">Sitio ↗</a>
+    </nav>
   </header>
 
   <!-- Vista: catálogo -->
   <main id="vista-catalogo" class="vista" hidden>
+    <span class="flor flor-1" aria-hidden="true"><svg><use href="#sakura"/></svg></span>
+    <span class="flor flor-2" aria-hidden="true"><svg><use href="#sakura"/></svg></span>
+    <span class="flor flor-3" aria-hidden="true"><svg><use href="#sakura"/></svg></span>
+
     <section class="catalogo-cabecera">
-      <h1>Catálogo</h1>
+      <span class="etiqueta">Sebastrail · Material de ensayo</span>
+      <h1>Repertorio</h1>
       <p id="descripcion-proyecto"></p>
       <input id="buscador" type="search" placeholder="Buscar canción…" aria-label="Buscar canción">
     </section>
-    <ul id="lista-canciones" class="lista-canciones"></ul>
+
+    <section class="marco catalogo-marco">
+      <div class="marco-interior">
+        <div class="catalogo-titulo">
+          <h2>Canciones</h2>
+          <span id="conteo-canciones"></span>
+        </div>
+        <ul id="lista-canciones" class="lista-canciones"></ul>
+      </div>
+    </section>
+
+    <footer class="pie">Hikari Records · <a href="https://sebastrail.com" target="_blank" rel="noopener">sebastrail.com</a></footer>
   </main>
 
   <!-- Vista: reproductor -->
   <main id="vista-reproductor" class="vista" hidden>
+    <span class="flor flor-1" aria-hidden="true"><svg><use href="#sakura"/></svg></span>
+    <span class="flor flor-2" aria-hidden="true"><svg><use href="#sakura"/></svg></span>
+
     <section class="cancion-cabecera">
-      <a href="#/" class="boton-volver" aria-label="Volver al catálogo">
-        <svg viewBox="0 0 24 24" width="18" height="18"><path d="M15 5l-7 7 7 7" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-      </a>
-      <div>
+      <div class="cancion-titulos">
+        <a href="#/" class="boton-volver" aria-label="Volver al catálogo">
+          <svg viewBox="0 0 24 24" width="14" height="14"><path d="M15 5l-7 7 7 7" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          Catálogo
+        </a>
         <h1 id="titulo-cancion"></h1>
         <p id="meta-cancion" class="meta"></p>
       </div>
-      <button id="boton-restablecer" class="boton-texto" type="button">Restablecer mezcla</button>
+      <button id="boton-restablecer" class="boton-pildora" type="button">Restablecer mezcla</button>
     </section>
 
     <div id="carga" class="carga">
@@ -48,17 +88,19 @@
       <p id="carga-texto">Cargando pistas…</p>
     </div>
 
-    <section id="mezclador" class="mezclador" hidden>
-      <div class="columna-controles">
-        <div class="esquina-regla"></div>
-        <div id="controles-pistas"></div>
-      </div>
-      <div id="columna-ondas" class="columna-ondas">
-        <canvas id="regla" class="regla"></canvas>
-        <div id="ondas-pistas"></div>
-        <div id="atenuador" class="atenuador"></div>
-        <div id="cabezal" class="cabezal"><span></span></div>
-        <div id="hover" class="hover-linea"></div>
+    <section id="mezclador-marco" class="marco mezclador-marco" hidden>
+      <div id="mezclador" class="mezclador">
+        <div class="columna-controles">
+          <div class="esquina-regla"><span class="etiqueta">Pistas</span></div>
+          <div id="controles-pistas"></div>
+        </div>
+        <div id="columna-ondas" class="columna-ondas">
+          <canvas id="regla" class="regla"></canvas>
+          <div id="ondas-pistas"></div>
+          <div id="atenuador" class="atenuador"></div>
+          <div id="cabezal" class="cabezal"><span></span></div>
+          <div id="hover" class="hover-linea"></div>
+        </div>
       </div>
     </section>
   </main>
@@ -66,12 +108,12 @@
   <!-- Barra de transporte -->
   <footer id="transporte" class="transporte" hidden>
     <div class="transporte-botones">
-      <button id="boton-stop" class="boton-transporte" type="button" aria-label="Stop" title="Stop (volver al inicio)">
-        <svg viewBox="0 0 24 24" width="18" height="18"><rect x="6" y="6" width="12" height="12" rx="2" fill="currentColor"/></svg>
-      </button>
       <button id="boton-play" class="boton-transporte principal" type="button" aria-label="Reproducir" title="Play / pausa (Espacio)">
-        <svg class="icono-play" viewBox="0 0 24 24" width="22" height="22"><path d="M8 5.5v13a1 1 0 0 0 1.5.86l10.5-6.5a1 1 0 0 0 0-1.72L9.5 4.64A1 1 0 0 0 8 5.5z" fill="currentColor"/></svg>
-        <svg class="icono-pausa" viewBox="0 0 24 24" width="22" height="22"><rect x="6.5" y="5" width="4" height="14" rx="1.2" fill="currentColor"/><rect x="13.5" y="5" width="4" height="14" rx="1.2" fill="currentColor"/></svg>
+        <svg class="icono-play" viewBox="0 0 24 24" width="22" height="22"><path d="M8.5 5.5v13a1 1 0 0 0 1.5.86l10-6.5a1 1 0 0 0 0-1.72l-10-6.5a1 1 0 0 0-1.5.86z" fill="currentColor"/></svg>
+        <svg class="icono-pausa" viewBox="0 0 24 24" width="22" height="22"><rect x="6.5" y="5" width="4" height="14" rx="1.5" fill="currentColor"/><rect x="13.5" y="5" width="4" height="14" rx="1.5" fill="currentColor"/></svg>
+      </button>
+      <button id="boton-stop" class="boton-transporte" type="button" aria-label="Stop" title="Stop (volver al inicio)">
+        <svg viewBox="0 0 24 24" width="16" height="16"><rect x="6" y="6" width="12" height="12" rx="2.5" fill="currentColor"/></svg>
       </button>
     </div>
     <span id="tiempo-actual" class="tiempo">0:00</span>
