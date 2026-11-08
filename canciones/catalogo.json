@@ -1,6 +1,6 @@
 {
   "proyecto": "Repertorio",
-  "descripcion": "Catálogo de canciones con stems para ensayar.",
+  "descripcion": "Canciones con stems separados para ensayar: aísla, silencia y recorre cada pista.",
   "canciones": [
     "703-prueba-claude"
   ]
