@@ -31,9 +31,15 @@ canciones/<id>/stems/*.m4a   Stems comprimidos (AAC)
    Para pistas mono (click, cues), usa `-c 1 -b 96000`. Todos los stems deben
    empezar en el mismo punto (exportados desde 0:00) para quedar sincronizados.
 3. Copia `canciones/703-prueba-claude/cancion.json` como plantilla y edita
-   título, pistas, colores y grupos. `"mute": true` hace que la pista empiece
+   título, pistas y grupos (los colores de onda los asigna el reproductor:
+   instrumentos en negro, guías y mezcla en gris rosado). `"mute": true` hace que la pista empiece
    silenciada (útil para la mezcla completa, metrónomo y cues).
-4. Agrega el `<id>` a la lista en `canciones/catalogo.json`.
+4. Agrega el `<id>` a la sección que corresponda en `canciones/catalogo.json`
+   (`"secciones"`: hoy **Originales** y **Arreglos**; el orden de la lista es el
+   orden en pantalla).
+
+Para exportar desde Ableton, convertir y **reemplazar stems** de la fase beta,
+ver [REEMPLAZAR-STEMS.md](REEMPLAZAR-STEMS.md) y la carpeta `herramientas/`.
 
 > No subas los WAV: pesan ~110 MB cada uno y GitHub rechaza archivos de más de
 > 100 MB. El `.gitignore` ya los excluye.
