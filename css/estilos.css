@@ -1,0 +1,189 @@
+:root {
+  --fondo: #111214;
+  --panel: #191a1d;
+  --panel-2: #202125;
+  --borde: #2a2b30;
+  --texto: #ececee;
+  --texto-2: #9a9ca5;
+  --texto-3: #6b6d75;
+  --acento: #f5a524;
+  --solo: #f5c518;
+  --mute: #ff5d5d;
+  --alto-pista: 68px;
+  --alto-regla: 28px;
+  --ancho-controles: 236px;
+  --alto-transporte: 76px;
+  color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+html, body { margin: 0; height: 100%; }
+body {
+  background: var(--fondo);
+  color: var(--texto);
+  font: 14px/1.45 Inter, system-ui, -apple-system, "Segoe UI", sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+button, input { font: inherit; color: inherit; }
+button { cursor: pointer; }
+[hidden] { display: none !important; }
+a { color: inherit; }
+
+/* ---------- Barra superior ---------- */
+.barra-superior {
+  height: 52px; display: flex; align-items: center; justify-content: space-between;
+  padding: 0 20px; border-bottom: 1px solid var(--borde); background: var(--panel);
+  position: sticky; top: 0; z-index: 20;
+}
+.marca { display: flex; align-items: center; gap: 10px; text-decoration: none; font-weight: 700; letter-spacing: -.01em; }
+.marca-icono { display: inline-flex; align-items: center; gap: 2px; height: 22px; width: 22px; padding: 0 3px; border-radius: 6px; background: var(--acento); }
+.marca-icono i { display: block; width: 2.5px; border-radius: 2px; background: #161616; }
+.marca-icono i:nth-child(1) { height: 7px; } .marca-icono i:nth-child(2) { height: 14px; }
+.marca-icono i:nth-child(3) { height: 10px; } .marca-icono i:nth-child(4) { height: 4px; }
+.barra-ayuda { color: var(--texto-3); font-size: 12px; }
+
+.vista { padding: 24px 20px calc(var(--alto-transporte) + 32px); max-width: 1400px; margin: 0 auto; }
+
+/* ---------- Catálogo ---------- */
+.catalogo-cabecera h1 { font-size: 28px; margin: 8px 0 4px; letter-spacing: -.02em; }
+.catalogo-cabecera p { color: var(--texto-2); margin: 0 0 18px; }
+#buscador {
+  width: 100%; max-width: 360px; padding: 10px 14px; border-radius: 10px;
+  background: var(--panel-2); border: 1px solid var(--borde); outline: none;
+}
+#buscador:focus { border-color: var(--acento); }
+.lista-canciones { list-style: none; padding: 0; margin: 22px 0 0; display: grid; gap: 12px; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); }
+.tarjeta {
+  display: flex; gap: 14px; align-items: center; padding: 14px; border-radius: 14px;
+  background: var(--panel); border: 1px solid var(--borde); text-decoration: none;
+  transition: border-color .15s, background .15s;
+}
+.tarjeta:hover { border-color: #3a3b42; background: var(--panel-2); }
+.tarjeta-portada {
+  flex: none; width: 56px; height: 56px; border-radius: 10px; display: grid; place-items: center;
+  background: linear-gradient(135deg, #2b2c31, #1c1d21); color: var(--acento); font-weight: 700; font-size: 15px;
+}
+.tarjeta h2 { margin: 0; font-size: 15px; font-weight: 600; }
+.tarjeta p { margin: 2px 0 0; color: var(--texto-2); font-size: 12.5px; }
+.chips { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 6px; }
+.chip { font-size: 11px; padding: 1px 7px; border-radius: 99px; background: #26272c; color: var(--texto-2); }
+.vacio { color: var(--texto-2); }
+
+/* ---------- Cabecera de canción ---------- */
+.cancion-cabecera { display: flex; align-items: center; gap: 14px; margin-bottom: 18px; }
+.cancion-cabecera h1 { margin: 0; font-size: 22px; letter-spacing: -.02em; }
+.cancion-cabecera .meta { margin: 2px 0 0; color: var(--texto-2); font-size: 13px; }
+.boton-volver {
+  width: 36px; height: 36px; border-radius: 10px; display: grid; place-items: center;
+  background: var(--panel-2); border: 1px solid var(--borde); flex: none;
+}
+.boton-volver:hover { border-color: #3a3b42; }
+.boton-texto {
+  margin-left: auto; background: transparent; border: 1px solid var(--borde); border-radius: 8px;
+  padding: 7px 12px; color: var(--texto-2); font-size: 13px;
+}
+.boton-texto:hover { color: var(--texto); border-color: #3a3b42; }
+
+/* ---------- Carga ---------- */
+.carga { padding: 60px 0; text-align: center; color: var(--texto-2); }
+.carga-barra { width: min(360px, 80%); height: 6px; margin: 0 auto 12px; border-radius: 99px; background: var(--panel-2); overflow: hidden; }
+#carga-relleno { height: 100%; width: 0; background: var(--acento); transition: width .2s; }
+.carga.error { color: var(--mute); }
+
+/* ---------- Mezclador ---------- */
+.mezclador {
+  display: grid; grid-template-columns: var(--ancho-controles) 1fr;
+  border: 1px solid var(--borde); border-radius: 14px; overflow: hidden; background: var(--panel);
+}
+.columna-controles { border-right: 1px solid var(--borde); background: var(--panel); position: relative; z-index: 2; }
+.esquina-regla { height: var(--alto-regla); border-bottom: 1px solid var(--borde); }
+
+.control-pista {
+  height: var(--alto-pista); display: flex; border-bottom: 1px solid var(--borde);
+}
+.control-pista:last-child, .onda-pista:last-child { border-bottom: 0; }
+.color-pista { width: 4px; flex: none; background: var(--c); }
+.control-cuerpo { flex: 1; min-width: 0; padding: 9px 10px 8px 12px; display: flex; flex-direction: column; justify-content: space-between; }
+.control-fila { display: flex; align-items: center; gap: 8px; }
+.nombre-pista { flex: 1; min-width: 0; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.grupo-etiqueta { display: block; font-size: 10.5px; color: var(--texto-3); text-transform: uppercase; letter-spacing: .06em; font-weight: 600; }
+.botones-ms { display: flex; gap: 4px; flex: none; }
+.boton-m, .boton-s {
+  width: 28px; height: 24px; border-radius: 6px; border: 1px solid #34353b; background: #25262b;
+  font: 700 11.5px/1 Inter, system-ui, sans-serif; color: var(--texto-2);
+  transition: background .1s, color .1s, border-color .1s;
+}
+.boton-m:hover, .boton-s:hover { border-color: #4a4b52; color: var(--texto); }
+.boton-m[aria-pressed="true"] { background: var(--mute); border-color: var(--mute); color: #1a0d0d; }
+.boton-s[aria-pressed="true"] { background: var(--solo); border-color: var(--solo); color: #1a1505; }
+
+.volumen-pista, #volumen-maestro {
+  -webkit-appearance: none; appearance: none; width: 100%; height: 16px; background: transparent; margin: 0;
+}
+.volumen-pista::-webkit-slider-runnable-track, #volumen-maestro::-webkit-slider-runnable-track { height: 4px; border-radius: 99px; background: linear-gradient(to right, var(--c, var(--texto-2)) var(--v, 66%), #34353b var(--v, 66%)); }
+.volumen-pista::-moz-range-track, #volumen-maestro::-moz-range-track { height: 4px; border-radius: 99px; background: linear-gradient(to right, var(--c, var(--texto-2)) var(--v, 66%), #34353b var(--v, 66%)); }
+.volumen-pista::-webkit-slider-thumb, #volumen-maestro::-webkit-slider-thumb { -webkit-appearance: none; width: 12px; height: 12px; margin-top: -4px; border-radius: 50%; background: #e8e8ea; border: 0; }
+.volumen-pista::-moz-range-thumb, #volumen-maestro::-moz-range-thumb { width: 12px; height: 12px; border-radius: 50%; background: #e8e8ea; border: 0; }
+
+.columna-ondas { position: relative; min-width: 0; cursor: text; user-select: none; touch-action: pan-y; }
+.regla { display: block; width: 100%; height: var(--alto-regla); border-bottom: 1px solid var(--borde); background: var(--panel); cursor: pointer; }
+.onda-pista { height: var(--alto-pista); border-bottom: 1px solid var(--borde); position: relative; transition: opacity .15s; background: #15161a; }
+.onda-pista canvas { display: block; width: 100%; height: 100%; }
+.onda-pista.inaudible { opacity: .28; }
+.control-pista.inaudible .nombre-pista { color: var(--texto-3); }
+
+.atenuador { position: absolute; top: var(--alto-regla); bottom: 0; right: 0; background: rgba(17, 18, 20, .42); pointer-events: none; }
+.cabezal { position: absolute; top: 0; bottom: 0; width: 0; pointer-events: none; z-index: 3; }
+.cabezal::before { content: ""; position: absolute; top: 0; bottom: 0; left: -1px; width: 2px; background: var(--texto); box-shadow: 0 0 8px rgba(0,0,0,.6); }
+.cabezal span { position: absolute; top: 0; left: -6px; width: 12px; height: 10px; background: var(--texto); clip-path: polygon(0 0, 100% 0, 50% 100%); }
+.hover-linea { position: absolute; top: 0; bottom: 0; width: 1px; background: rgba(255,255,255,.25); pointer-events: none; display: none; z-index: 2; }
+.columna-ondas:hover .hover-linea { display: block; }
+
+/* ---------- Transporte ---------- */
+.transporte {
+  position: fixed; left: 0; right: 0; bottom: 0; height: var(--alto-transporte); z-index: 30;
+  display: flex; align-items: center; gap: 14px; padding: 0 20px;
+  background: rgba(25, 26, 29, .96); backdrop-filter: blur(10px); border-top: 1px solid var(--borde);
+}
+.transporte-botones { display: flex; align-items: center; gap: 8px; }
+.boton-transporte {
+  width: 40px; height: 40px; border-radius: 50%; display: grid; place-items: center;
+  border: 1px solid var(--borde); background: var(--panel-2); color: var(--texto);
+}
+.boton-transporte:hover { border-color: #44454c; }
+.boton-transporte.principal { width: 48px; height: 48px; background: var(--acento); border-color: var(--acento); color: #161616; }
+.boton-transporte.principal:hover { filter: brightness(1.08); }
+.boton-transporte:disabled { opacity: .4; cursor: default; }
+.icono-pausa { display: none; }
+.reproduciendo .icono-play { display: none; }
+.reproduciendo .icono-pausa { display: block; }
+
+.tiempo { font: 500 13px/1 "JetBrains Mono", ui-monospace, monospace; color: var(--texto-2); min-width: 44px; text-align: center; font-variant-numeric: tabular-nums; }
+#tiempo-actual { color: var(--texto); }
+.linea-tiempo { flex: 1; height: 28px; position: relative; cursor: pointer; display: flex; align-items: center; touch-action: none; outline: none; }
+.linea-pista { width: 100%; height: 5px; border-radius: 99px; background: #34353b; overflow: hidden; }
+.linea-progreso { height: 100%; width: 0; background: var(--acento); }
+.linea-perilla { position: absolute; left: 0; width: 14px; height: 14px; margin-left: -7px; border-radius: 50%; background: #fff; box-shadow: 0 1px 4px rgba(0,0,0,.5); transform: scale(.85); transition: transform .1s; }
+.linea-tiempo:hover .linea-perilla, .linea-tiempo:focus-visible .linea-perilla { transform: scale(1); }
+.linea-tiempo:focus-visible .linea-pista { outline: 2px solid var(--acento); outline-offset: 3px; }
+.volumen-maestro { display: flex; align-items: center; gap: 8px; width: 150px; color: var(--texto-2); }
+
+/* ---------- Móvil ---------- */
+@media (max-width: 720px) {
+  :root { --ancho-controles: 136px; --alto-pista: 62px; --alto-transporte: 112px; }
+  .barra-superior { padding: 0 16px; }
+  .barra-ayuda { display: none; }
+  .vista { padding-left: 16px; padding-right: 16px; }
+  .control-cuerpo { padding: 7px 6px 6px 8px; }
+  .control-fila { flex-direction: column; align-items: stretch; gap: 4px; }
+  .nombre-pista { font-size: 12.5px; }
+  .grupo-etiqueta { display: none; }
+  .volumen-pista { display: none; }
+  .boton-m, .boton-s { flex: 1; }
+  .boton-texto { font-size: 12px; padding: 6px 9px; }
+  .cancion-cabecera { flex-wrap: wrap; }
+  .transporte { flex-wrap: wrap; height: auto; padding: 10px 16px 14px; gap: 8px 12px; }
+  .linea-tiempo { order: -1; flex: 1 1 100%; }
+  .transporte .tiempo:first-of-type { margin-left: auto; }
+  .volumen-maestro { width: 110px; }
+}
