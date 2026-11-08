@@ -16,9 +16,9 @@ let picosPorPista = new Map();
 let cargaId = 0;
 
 // ---------------------------------------------------------------- paleta
-// Tonos de negro, rosa y blanco (identidad sebastrail.com). Los instrumentos
-// alternan tinta y rosa; las guías y la mezcla de referencia van en grises claros.
-const PALETA_INSTRUMENTOS = ['#1a1a1a', '#b76478', '#4a4043', '#d48a9e', '#7a6d70', '#8e3f57'];
+// Identidad sebastrail.com. Todas las ondas de instrumentos van en tinta negra;
+// las guías y la mezcla de referencia van en grises rosados.
+const PALETA_INSTRUMENTOS = ['#1a1a1a'];
 const PALETA_GRUPO = { 'Guías': '#c9bcbc', 'Referencia': '#9a8f91' };
 
 function asignarColores(pistas) {
@@ -50,21 +50,37 @@ async function cargarCatalogo() {
   $('#nombre-proyecto').textContent = catalogo.proyecto || 'Repertorio';
   $('#descripcion-proyecto').textContent = catalogo.descripcion || '';
   document.title = 'Repertorio · Sebastrail';
-  canciones = await Promise.all(catalogo.canciones.map(async (id) => {
+  // Formato con secciones: { secciones: [{ nombre, canciones: [id…] }] }.
+  // Se acepta también el formato antiguo { canciones: [id…] } (una sola sección).
+  const secciones = catalogo.secciones || [{ nombre: 'Canciones', canciones: catalogo.canciones || [] }];
+  canciones = await Promise.all(secciones.flatMap(s => s.canciones.map(async (id) => {
     const base = `canciones/${id}/`;
-    try { return { id, base, datos: await json(base + 'cancion.json') }; }
+    try { return { id, base, seccion: s.nombre, datos: await json(base + 'cancion.json') }; }
     catch (e) { console.warn(e); return null; }
-  }));
+  })));
   canciones = canciones.filter(Boolean);
+  catalogo.ordenSecciones = secciones.map(s => s.nombre);
 }
 
+const contar = (n) => `${n} ${n === 1 ? 'canción' : 'canciones'}`;
+
 function pintarCatalogo(filtro = '') {
-  const lista = $('#lista-canciones');
+  const contenedor = $('#secciones-catalogo');
   const f = filtro.trim().toLowerCase();
   const visibles = canciones.filter(c => !f || [c.datos.titulo, c.datos.subtitulo, c.datos.artista].join(' ').toLowerCase().includes(f));
-  $('#conteo-canciones').textContent = `${canciones.length} ${canciones.length === 1 ? 'canción' : 'canciones'}`;
-  if (!visibles.length) { lista.innerHTML = `<li class="vacio">No hay canciones que coincidan.</li>`; return; }
-  lista.innerHTML = visibles.map(c => {
+  if (!visibles.length) { contenedor.innerHTML = `<p class="vacio">No hay canciones que coincidan.</p>`; return; }
+  contenedor.innerHTML = catalogo.ordenSecciones.map(nombre => {
+    const total = canciones.filter(c => c.seccion === nombre).length;
+    const enSeccion = visibles.filter(c => c.seccion === nombre);
+    if (!enSeccion.length) return '';
+    return `<section class="seccion-catalogo">
+      <div class="catalogo-titulo"><h2>${escapar(nombre)}</h2><span>${contar(total)}</span></div>
+      <ul class="lista-canciones">${tarjetas(enSeccion)}</ul></section>`;
+  }).join('');
+}
+
+function tarjetas(lista) {
+  return lista.map(c => {
     const d = c.datos;
     const meta = [d.artista, d.tonalidad && `Tono ${d.tonalidad}`, d.bpm && `${d.bpm} BPM`, d.duracion && formatear(d.duracion), `${d.pistas.length} pistas`].filter(Boolean).join(' · ');
     const chips = d.pistas.filter(p => p.grupo !== 'Referencia' && p.grupo !== 'Guías').map(p => `<span class="chip">${escapar(p.nombre)}</span>`).join('');
@@ -100,7 +116,12 @@ async function abrirCancion(id) {
 
   try {
     await motor.cargar(
-      asignarColores(d.pistas).map(p => ({ ...p, url: new URL(p.archivo, new URL(c.base, location.href)).href })),
+      // "v" (versión del stem) cambia la URL para que el navegador no use una copia vieja tras un reemplazo.
+      asignarColores(d.pistas).map(p => {
+        const url = new URL(p.archivo, new URL(c.base, location.href));
+        if (p.v) url.searchParams.set('v', p.v);
+        return { ...p, url: url.href };
+      }),
       (f, texto) => {
         if (mio !== cargaId) return;
         $('#carga-relleno').style.width = `${(f * 100).toFixed(1)}%`;
@@ -344,7 +365,7 @@ async function enrutar() {
   try { await cargarCatalogo(); }
   catch (e) {
     vistas.catalogo.hidden = false;
-    $('#lista-canciones').innerHTML = `<li class="vacio">No se pudo cargar el catálogo. Si abriste el archivo directamente, sírvelo con un servidor web (ver README).</li>`;
+    $('#secciones-catalogo').innerHTML = `<p class="vacio">No se pudo cargar el catálogo. Si abriste el archivo directamente, sírvelo con un servidor web (ver README).</li>`;
     return;
   }
   const m = location.hash.match(/^#\/cancion\/(.+)$/);
