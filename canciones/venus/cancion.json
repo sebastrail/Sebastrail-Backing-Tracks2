@@ -1,0 +1,19 @@
+{
+  "titulo": "Venus",
+  "subtitulo": "",
+  "artista": "Sebastrail",
+  "tonalidad": "",
+  "bpm": 150,
+  "duracion": 262,
+  "estado": "beta",
+  "notas": "Versión beta del backing track.",
+  "pistas": [
+    {"id": "bateria", "nombre": "Batería", "archivo": "stems/bateria.m4a", "grupo": "Instrumentos", "fuente": "Batería", "v": 1},
+    {"id": "piano", "nombre": "Piano", "archivo": "stems/piano.m4a", "grupo": "Instrumentos", "fuente": "Piano", "v": 1},
+    {"id": "guitarra-electrica", "nombre": "Guitarra eléctrica", "archivo": "stems/guitarra-electrica.m4a", "grupo": "Instrumentos", "fuente": "Guitarra Eléctrica", "v": 1},
+    {"id": "trompeta", "nombre": "Trompeta", "archivo": "stems/trompeta.m4a", "grupo": "Instrumentos", "fuente": "Trpt", "v": 1},
+    {"id": "metronomo", "nombre": "Metrónomo", "archivo": "stems/metronomo.m4a", "grupo": "Guías", "fuente": "3-Metrónomo", "v": 1, "mute": true},
+    {"id": "cue", "nombre": "Cues", "archivo": "stems/cue.m4a", "grupo": "Guías", "fuente": "Cue", "v": 1, "mute": true},
+    {"id": "mezcla", "nombre": "Mezcla completa", "archivo": "stems/mezcla.m4a", "grupo": "Referencia", "fuente": "Main", "v": 1, "mute": true}
+  ]
+}
