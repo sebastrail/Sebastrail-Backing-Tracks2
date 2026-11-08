@@ -35,7 +35,7 @@ async function cargarCatalogo() {
   catalogo = await json('canciones/catalogo.json');
   $('#nombre-proyecto').textContent = catalogo.proyecto || 'Repertorio';
   $('#descripcion-proyecto').textContent = catalogo.descripcion || '';
-  document.title = catalogo.proyecto || 'Repertorio';
+  document.title = 'Repertorio · Sebastrail';
   canciones = await Promise.all(catalogo.canciones.map(async (id) => {
     const base = `canciones/${id}/`;
     try { return { id, base, datos: await json(base + 'cancion.json') }; }
@@ -48,16 +48,19 @@ function pintarCatalogo(filtro = '') {
   const lista = $('#lista-canciones');
   const f = filtro.trim().toLowerCase();
   const visibles = canciones.filter(c => !f || [c.datos.titulo, c.datos.subtitulo, c.datos.artista].join(' ').toLowerCase().includes(f));
+  $('#conteo-canciones').textContent = `${canciones.length} ${canciones.length === 1 ? 'canción' : 'canciones'}`;
   if (!visibles.length) { lista.innerHTML = `<li class="vacio">No hay canciones que coincidan.</li>`; return; }
   lista.innerHTML = visibles.map(c => {
     const d = c.datos;
-    const meta = [d.artista, d.tonalidad && `Tono ${d.tonalidad}`, d.bpm && `${d.bpm} BPM`, d.duracion && formatear(d.duracion)].filter(Boolean).join(' · ');
+    const meta = [d.artista, d.tonalidad && `Tono ${d.tonalidad}`, d.bpm && `${d.bpm} BPM`, d.duracion && formatear(d.duracion), `${d.pistas.length} pistas`].filter(Boolean).join(' · ');
     const chips = d.pistas.filter(p => p.grupo !== 'Referencia' && p.grupo !== 'Guías').map(p => `<span class="chip">${escapar(p.nombre)}</span>`).join('');
     const iniciales = (d.titulo || '?').slice(0, 3).toUpperCase();
     return `<li><a class="tarjeta" href="#/cancion/${encodeURIComponent(c.id)}">
       <span class="tarjeta-portada">${escapar(iniciales)}</span>
-      <span><h2>${escapar(d.titulo)}${d.subtitulo ? ` <span style="color:var(--texto-2);font-weight:400">— ${escapar(d.subtitulo)}</span>` : ''}</h2>
-      <p>${escapar(meta)} · ${d.pistas.length} pistas</p><span class="chips">${chips}</span></span></a></li>`;
+      <span class="tarjeta-texto"><h3>${escapar(d.titulo)}${d.subtitulo ? ` <small>— ${escapar(d.subtitulo)}</small>` : ''}</h3>
+      <p>${escapar(meta)}</p></span>
+      <span class="chips">${chips}</span>
+      <span class="tarjeta-flecha" aria-hidden="true"><svg viewBox="0 0 24 24" width="14" height="14"><path d="M9 5l7 7-7 7" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></span></a></li>`;
   }).join('');
 }
 
@@ -70,11 +73,11 @@ async function abrirCancion(id) {
   const mio = ++cargaId;
   const d = c.datos;
 
-  $('#titulo-cancion').textContent = d.subtitulo ? `${d.titulo} — ${d.subtitulo}` : d.titulo;
+  $('#titulo-cancion').innerHTML = escapar(d.titulo) + (d.subtitulo ? ` <small>${escapar(d.subtitulo)}</small>` : '');
   $('#meta-cancion').textContent = [d.artista, d.tonalidad && `Tono ${d.tonalidad}`, d.bpm && `${d.bpm} BPM`, `${d.pistas.length} pistas`, d.notas].filter(Boolean).join(' · ');
-  document.title = `${d.titulo} · ${catalogo.proyecto || 'Repertorio'}`;
+  document.title = `${d.titulo} · Repertorio · Sebastrail`;
 
-  $('#mezclador').hidden = true;
+  $('#mezclador-marco').hidden = true;
   const carga = $('#carga');
   carga.hidden = false; carga.classList.remove('error');
   $('#carga-relleno').style.width = '0%';
@@ -102,7 +105,7 @@ async function abrirCancion(id) {
   picosPorPista = new Map(motor.pistas.map(p => [p.id, calcularPicos(p.buffer)]));
   construirMezclador();
   carga.hidden = true;
-  $('#mezclador').hidden = false;
+  $('#mezclador-marco').hidden = false;
   botonPlay.disabled = false;
   lineaTiempo.setAttribute('aria-valuemax', Math.round(motor.duracion));
   $('#tiempo-total').textContent = formatear(motor.duracion);
@@ -190,7 +193,7 @@ function dibujarOnda(carril) {
     const v = Math.max(0.5, Math.sqrt(m * escala) * alto); // raíz: más legible
     g.fillRect(i * 2, mitad - v, 1.4, v * 2);
   }
-  g.fillStyle = 'rgba(255,255,255,0.06)';
+  g.fillStyle = 'rgba(155,111,120,0.10)';
   g.fillRect(0, mitad, w, 1);
 }
 
@@ -202,14 +205,14 @@ function dibujarRegla() {
   const pasos = [1, 2, 5, 10, 15, 30, 60, 120];
   const paso = pasos.find(s => s * pxPorSeg >= 60) || 300;
   const sub = paso >= 10 ? paso / 5 : paso / 2;
-  g.font = '500 10.5px "JetBrains Mono", ui-monospace, monospace';
+  g.font = '500 11px Jost, Arial, sans-serif';
   g.textBaseline = 'middle';
   for (let t = 0; t <= dur; t += sub) {
     const x = Math.round(t * pxPorSeg) + 0.5;
     const mayor = Math.abs(t / paso - Math.round(t / paso)) < 1e-6;
-    g.fillStyle = mayor ? '#4a4b52' : '#2f3035';
+    g.fillStyle = mayor ? '#d9c6c2' : '#ebdfdc';
     g.fillRect(x, mayor ? h - 10 : h - 5, 1, mayor ? 10 : 5);
-    if (mayor) { g.fillStyle = '#8b8d96'; g.fillText(formatear(t), x + 4, h / 2 - 2); }
+    if (mayor) { g.fillStyle = '#9b6f78'; g.fillText(formatear(t), x + 4, h / 2 - 2); }
   }
 }
 
@@ -341,7 +344,7 @@ async function enrutar() {
     vistas.reproductor.hidden = true;
     transporte.hidden = true;
     vistas.catalogo.hidden = false;
-    document.title = catalogo.proyecto || 'Repertorio';
+    document.title = 'Repertorio · Sebastrail';
     pintarCatalogo($('#buscador').value);
   }
 }
@@ -349,3 +352,6 @@ async function enrutar() {
 window.addEventListener('hashchange', enrutar);
 enrutar();
 requestAnimationFrame(bucle);
+
+// Redibuja la regla cuando termine de cargar la tipografía Jost.
+if (document.fonts) document.fonts.ready.then(() => dibujarTodo());
