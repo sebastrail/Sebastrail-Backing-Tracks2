@@ -7,10 +7,10 @@
   "duracion": 383.33,
   "notas": "Primera prueba del reproductor multipista.",
   "pistas": [
-    { "id": "trompeta",  "nombre": "Trompeta",          "archivo": "../../trompeta.m4a",           "grupo": "Instrumentos" },
-    { "id": "guitarra",  "nombre": "Guitarra eléctrica", "archivo": "../../guitarra-electrica.m4a", "grupo": "Instrumentos" },
-    { "id": "piano",     "nombre": "Piano",             "archivo": "../../piano.m4a",              "grupo": "Instrumentos" },
-    { "id": "bajo",      "nombre": "Bajo (MIDI)",       "archivo": "../../bajo.m4a",               "grupo": "Instrumentos" },
+    { "id": "trompeta",  "nombre": "Trompeta",          "archivo": "../../trompeta.m4a",           "grupo": "Instrumentos", "partitura": "partituras/trompeta.json" },
+    { "id": "guitarra",  "nombre": "Guitarra eléctrica", "archivo": "../../guitarra-electrica.m4a", "grupo": "Instrumentos", "partitura": "partituras/guitarra.json" },
+    { "id": "piano",     "nombre": "Piano",             "archivo": "../../piano.m4a",              "grupo": "Instrumentos", "partitura": "partituras/piano.json" },
+    { "id": "bajo",      "nombre": "Bajo (MIDI)",       "archivo": "../../bajo.m4a",               "grupo": "Instrumentos", "partitura": "partituras/bajo.json" },
     { "id": "metronomo", "nombre": "Metrónomo",         "archivo": "../../metronomo.m4a",          "grupo": "Guías", "mute": true },
     { "id": "cue",       "nombre": "Cues",              "archivo": "../../cue.m4a",                "grupo": "Guías", "mute": true },
     { "id": "mezcla",    "nombre": "Mezcla completa",   "archivo": "../../mezcla.m4a",             "grupo": "Referencia", "mute": true }
