@@ -44,6 +44,30 @@ ver [REEMPLAZAR-STEMS.md](REEMPLAZAR-STEMS.md) y la carpeta `herramientas/`.
 > No subas los WAV: pesan ~110 MB cada uno y GitHub rechaza archivos de más de
 > 100 MB. El `.gitignore` ya los excluye.
 
+## Partituras sincronizadas
+
+Una pista con `"partitura": "partituras/<id>.json"` en su `cancion.json`
+muestra el botón ♫ junto a M y S. Al pulsarlo, el área de ondas se cambia por
+la partitura de ese instrumento: el compás que suena se resalta, la vista lo
+sigue y un clic en un compás lleva el audio a ese punto. Metrónomo y cues
+nunca llevan partitura.
+
+Cómo preparar una canción (ejemplo con 703, sin abrir MuseScore):
+
+```bash
+M="/Applications/MuseScore 4.app/Contents/MacOS/mscore"
+"$M" --score-parts cancion.mscz > partes.json   # partes en base64 (MuseScore se cierra con error al final; es normal)
+"$M" -o piano.svg piano.mscz                     # páginas piano-1.svg, piano-2.svg…
+"$M" -o piano.mpos piano.mscz                    # posición y tiempo de cada compás
+ruby herramientas/preparar-partitura.rb piano.mpos 3.3333 canciones/<id>/partituras piano piano-*.svg
+```
+
+El segundo argumento es el **desfase**: segundos entre el inicio del stem y el
+compás 1 (en el set de Ableton, el MIDI de 703 empieza 6 pulsos después del
+locator: 6 × 60/108 = 3,3333 s). Los tiempos del `.mpos` siguen el tempo de
+MuseScore con las repeticiones desplegadas, así que la partitura debe ser la
+misma versión que el MIDI de Ableton.
+
 ## Ver en local
 
 `fetch` no funciona abriendo `index.html` con doble clic; hace falta un

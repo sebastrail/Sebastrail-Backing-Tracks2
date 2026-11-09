@@ -97,6 +97,16 @@
           <div id="cabezal" class="cabezal"><span></span></div>
           <div id="hover" class="hover-linea"></div>
         </div>
+        <div id="columna-partitura" class="columna-partitura" hidden>
+          <div class="partitura-cabecera">
+            <span class="etiqueta">Partitura</span>
+            <strong id="partitura-nombre"></strong>
+            <button id="boton-ver-ondas" class="boton-pildora boton-ondas" type="button">Ver ondas</button>
+          </div>
+          <div id="partitura-desplazable" class="partitura-desplazable">
+            <div id="partitura-paginas" class="partitura-paginas"></div>
+          </div>
+        </div>
       </div>
     </section>
   </main>
@@ -133,6 +143,9 @@
           <span class="botones-ms">
             <button class="boton-m" type="button" aria-pressed="false" title="Mute">M</button>
             <button class="boton-s" type="button" aria-pressed="false" title="Solo (Alt/⌥ + clic: solo exclusivo)">S</button>
+            <button class="boton-p" type="button" aria-pressed="false" title="Ver partitura" hidden>
+              <svg viewBox="0 0 24 24" width="15" height="15" aria-hidden="true"><path d="M9 5.6 19 3.2v3.1L9 8.7z" fill="currentColor"/><path d="M8.2 7.2h1.6v10h-1.6zm10 -2.4h1.6v10h-1.6z" fill="currentColor"/><ellipse cx="6.4" cy="17.4" rx="3.1" ry="2.3" transform="rotate(-22 6.4 17.4)" fill="currentColor"/><ellipse cx="16.4" cy="15" rx="3.1" ry="2.3" transform="rotate(-22 16.4 15)" fill="currentColor"/></svg>
+            </button>
           </span>
         </div>
         <input class="volumen-pista" type="range" min="0" max="1.5" step="0.01" value="1">
