@@ -162,6 +162,36 @@ a { color: inherit; }
 .boton-m[aria-pressed="true"] { background: var(--tinta); border-color: var(--tinta); color: #fff; }
 .boton-s[aria-pressed="true"] { background: var(--rosa); border-color: var(--rosa); color: #fff; }
 
+/* Botón de partitura: dos corcheas en tinta sobre blanco */
+.boton-p {
+  width: 26px; height: 26px; border-radius: 8px; border: 1px solid #e3d8d5; background: #fff;
+  color: var(--tinta); display: grid; place-items: center; padding: 0;
+  transition: border-color .12s, box-shadow .12s;
+}
+.boton-p:hover { border-color: var(--tinta); }
+.boton-p[aria-pressed="true"] { border-color: var(--tinta); box-shadow: 0 0 0 2px var(--rosa-borde); }
+.control-pista.viendo-partitura { background: var(--rosa-suave); }
+
+/* ---------- Partitura ---------- */
+.columna-partitura { min-width: 0; display: flex; flex-direction: column; background: #fff; }
+.partitura-cabecera {
+  height: var(--alto-regla); flex: none; display: flex; align-items: center; gap: 10px;
+  padding: 0 6px 0 18px; border-bottom: 1px solid var(--linea); background: var(--crema);
+}
+.partitura-cabecera .etiqueta { font-size: 10px; }
+.partitura-cabecera strong { flex: 1; font-size: 13px; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.boton-ondas { padding: 4px 14px; font-size: 9.5px; }
+.partitura-desplazable { flex: 1; overflow-y: auto; overscroll-behavior: contain; background: #f6efec; padding: 14px; }
+.partitura-paginas { display: grid; gap: 14px; max-width: 980px; margin: 0 auto; }
+.partitura-pagina { position: relative; background: #fff; border-radius: 6px; box-shadow: 0 1px 4px rgba(124, 82, 92, .12); cursor: pointer; overflow: hidden; }
+.partitura-pagina img { display: block; width: 100%; height: auto; user-select: none; -webkit-user-drag: none; }
+.compas-actual {
+  position: absolute; pointer-events: none; border-radius: 4px;
+  background: rgba(183, 100, 120, .13); box-shadow: inset 0 0 0 1.5px rgba(183, 100, 120, .45);
+}
+.cursor-partitura { position: absolute; pointer-events: none; width: 2px; margin-left: -1px; background: var(--rosa); border-radius: 2px; }
+.partitura-aviso { padding: 40px 16px; text-align: center; color: var(--texto-2); }
+
 .volumen-pista, #volumen-maestro {
   -webkit-appearance: none; appearance: none; width: 100%; height: 14px; background: transparent; margin: 0; cursor: pointer;
 }
@@ -249,6 +279,11 @@ a { color: inherit; }
   .nombre-pista { font-size: 13.5px; }
   .grupo-etiqueta, .volumen-pista { display: none; }
   .boton-m, .boton-s { flex: 1; }
+  .partitura-cabecera { padding: 0 4px 0 8px; gap: 6px; }
+  .partitura-cabecera .etiqueta { display: none; }
+  .boton-ondas { padding: 3px 10px; }
+  .partitura-desplazable { padding: 4px; }
+  .partitura-paginas { gap: 6px; }
   .esquina-regla { padding-left: 12px; }
   .transporte { flex-wrap: wrap; height: auto; border-radius: 30px; padding: 12px 18px 14px; gap: 6px 12px; bottom: 10px; }
   .linea-tiempo { order: -1; flex: 1 1 100%; }
