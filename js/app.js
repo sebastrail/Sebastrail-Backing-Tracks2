@@ -138,6 +138,7 @@ async function abrirCancion(id) {
   if (mio !== cargaId) return;
 
   picosPorPista = new Map(motor.pistas.map(p => [p.id, calcularPicos(p.buffer)]));
+  cerrarPartitura();
   construirMezclador();
   carga.hidden = true;
   $('#mezclador-marco').hidden = false;
@@ -164,6 +165,13 @@ function construirMezclador() {
     nombre.title = p.nombre;
     nodo.querySelector('.boton-m').addEventListener('click', () => motor.alternarMute(p.id));
     nodo.querySelector('.boton-s').addEventListener('click', (e) => motor.alternarSolo(p.id, e.altKey));
+    // Solo los instrumentos con "partitura" en cancion.json muestran el botón ♫.
+    if (p.partitura) {
+      const bp = nodo.querySelector('.boton-p');
+      bp.hidden = false;
+      bp.title = `Ver partitura de ${p.nombre}`;
+      bp.addEventListener('click', () => alternarPartitura(p.id));
+    }
     const vol = nodo.querySelector('.volumen-pista');
     vol.setAttribute('aria-label', `Volumen de ${p.nombre}`);
     const pintarVol = () => vol.style.setProperty('--v', `${(vol.value / vol.max) * 100}%`);
@@ -268,7 +276,170 @@ function actualizarCabezal() {
   $('#tiempo-actual').textContent = formatear(t);
   lineaTiempo.setAttribute('aria-valuenow', Math.round(t));
   lineaTiempo.setAttribute('aria-valuetext', `${formatear(t)} de ${formatear(dur)}`);
+  if (partitura) actualizarPartitura(t);
 }
+
+// ---------------------------------------------------------------- partitura
+// Datos por pista (ver herramientas/preparar-partitura.rb):
+//   { ancho, alto, paginas: [svg…], compases: [[pagina, x, y, w, h]…], eventos: [[compas, segundos]…] }
+// "eventos" sigue el orden de reproducción (repeticiones desplegadas) y ya
+// incluye el desfase entre el inicio del stem y el compás 1.
+const columnaPartitura = $('#columna-partitura');
+const desplazable = $('#partitura-desplazable');
+const cachePartituras = new Map();
+let partitura = null;       // { id, datos, base, paginas: [div], marca, cursor, ultimo }
+let desplazamientoManual = 0;
+
+async function alternarPartitura(id) {
+  if (partitura?.id === id) { cerrarPartitura(); return; }
+  const c = canciones.find(x => x.id === cancionActual);
+  const p = motor.pistas.find(x => x.id === id);
+  if (!c || !p?.partitura) return;
+  const url = new URL(p.partitura, new URL(c.base, location.href)).href;
+
+  partitura = { id, url, paginas: [], ultimo: -1 };
+  marcarBotonesPartitura();
+  $('#partitura-nombre').textContent = p.nombre;
+  columnaOndas.hidden = true;
+  columnaPartitura.hidden = false;
+  ajustarAltoPartitura();
+  const contenedor = $('#partitura-paginas');
+  contenedor.innerHTML = '<p class="partitura-aviso">Cargando partitura…</p>';
+
+  let datos;
+  try {
+    if (!cachePartituras.has(url)) cachePartituras.set(url, json(url));
+    datos = await cachePartituras.get(url);
+  } catch (e) {
+    cachePartituras.delete(url);
+    if (partitura?.id === id) contenedor.innerHTML = '<p class="partitura-aviso">No se pudo cargar la partitura.</p>';
+    return;
+  }
+  if (partitura?.id !== id) return;
+  partitura.datos = datos;
+
+  contenedor.innerHTML = '';
+  partitura.paginas = datos.paginas.map((archivo, i) => {
+    const pag = document.createElement('div');
+    pag.className = 'partitura-pagina';
+    pag.style.aspectRatio = `${datos.ancho} / ${datos.alto}`;
+    const img = document.createElement('img');
+    img.src = new URL(archivo, url).href;
+    img.alt = `${p.nombre}, página ${i + 1}`;
+    img.decoding = 'async';
+    pag.appendChild(img);
+    pag.addEventListener('click', (e) => clicEnPartitura(e, i));
+    contenedor.appendChild(pag);
+    return pag;
+  });
+  partitura.marca = Object.assign(document.createElement('div'), { className: 'compas-actual' });
+  partitura.cursor = Object.assign(document.createElement('div'), { className: 'cursor-partitura' });
+  desplazable.scrollTop = 0;
+  actualizarPartitura(motor.tiempo, true);
+}
+
+function cerrarPartitura() {
+  partitura = null;
+  marcarBotonesPartitura();
+  columnaPartitura.hidden = true;
+  columnaOndas.hidden = false;
+  $('#partitura-paginas').innerHTML = '';
+  requestAnimationFrame(() => { dibujarTodo(); actualizarCabezal(); });
+}
+
+function marcarBotonesPartitura() {
+  document.querySelectorAll('.control-pista').forEach(ctrl => {
+    const activa = partitura?.id === ctrl.dataset.id;
+    ctrl.classList.toggle('viendo-partitura', activa);
+    ctrl.querySelector('.boton-p')?.setAttribute('aria-pressed', activa);
+  });
+}
+
+// La partitura necesita más alto que los carriles de onda: al menos ~62 % de la ventana.
+function ajustarAltoPartitura() {
+  const controles = document.querySelector('.columna-controles');
+  const alto = Math.max(controles.offsetHeight, Math.round(window.innerHeight * 0.62));
+  columnaPartitura.style.height = `${alto}px`;
+}
+
+// Último evento que empezó antes de t (búsqueda binaria).
+function eventoEn(t) {
+  const ev = partitura.datos.eventos;
+  let a = 0, b = ev.length - 1, r = -1;
+  while (a <= b) { const m = (a + b) >> 1; if (ev[m][1] <= t) { r = m; a = m + 1; } else b = m - 1; }
+  return r;
+}
+
+function finDeEvento(i) {
+  const ev = partitura.datos.eventos;
+  if (i + 1 < ev.length) return ev[i + 1][1];
+  // Último compás: misma duración que el anterior, sin pasar del final del audio.
+  const previo = i > 0 ? ev[i][1] - ev[i - 1][1] : 2;
+  return Math.min(ev[i][1] + previo, motor.duracion || ev[i][1] + previo);
+}
+
+function actualizarPartitura(t, forzarScroll = false) {
+  const d = partitura?.datos;
+  if (!d) return;
+  const i = eventoEn(t);
+  const { marca, cursor } = partitura;
+  if (i < 0) { marca.remove(); cursor.remove(); partitura.ultimo = -1; return; }
+  const [ci, inicio] = d.eventos[i];
+  const [pg, x, y, w, h] = d.compases[ci];
+  const pagina = partitura.paginas[pg];
+  if (!pagina) return;
+  const pct = (v, total) => `${(v / total) * 100}%`;
+  if (i !== partitura.ultimo || marca.parentNode !== pagina) {
+    const margen = h * 0.18;
+    Object.assign(marca.style, { left: pct(x, d.ancho), top: pct(y - margen, d.alto), width: pct(w, d.ancho), height: pct(h + margen * 2, d.alto) });
+    Object.assign(cursor.style, { top: pct(y - margen, d.alto), height: pct(h + margen * 2, d.alto) });
+    if (marca.parentNode !== pagina) { pagina.appendChild(marca); pagina.appendChild(cursor); }
+    seguirCompas(pagina, (y + h / 2) / d.alto, forzarScroll || i !== partitura.ultimo);
+    partitura.ultimo = i;
+  }
+  const fin = finDeEvento(i);
+  const f = Math.max(0, Math.min(1, (t - inicio) / Math.max(0.001, fin - inicio)));
+  cursor.style.left = pct(x + w * f, d.ancho);
+}
+
+// Mantiene el sistema actual a la vista, salvo que la persona acabe de desplazarse a mano.
+function seguirCompas(pagina, fy, cambio) {
+  if (!cambio || performance.now() - desplazamientoManual < 4000) return;
+  const caja = desplazable.getBoundingClientRect();
+  const r = pagina.getBoundingClientRect();
+  const yEnCaja = r.top - caja.top + r.height * fy;
+  if (yEnCaja < caja.height * 0.15 || yEnCaja > caja.height * 0.7) {
+    desplazable.scrollTo({ top: desplazable.scrollTop + yEnCaja - caja.height * 0.3, behavior: 'smooth' });
+  }
+}
+['wheel', 'touchmove'].forEach(ev => desplazable.addEventListener(ev, () => { desplazamientoManual = performance.now(); }, { passive: true }));
+
+// Clic en un compás: lleva el audio a ese punto (proporcional dentro del compás).
+function clicEnPartitura(e, pg) {
+  const d = partitura?.datos;
+  if (!d || !motor.duracion) return;
+  const r = e.currentTarget.getBoundingClientRect();
+  const px = ((e.clientX - r.left) / r.width) * d.ancho;
+  const py = ((e.clientY - r.top) / r.height) * d.alto;
+  const holgura = 140; // tolera clics un poco por encima o por debajo del pentagrama
+  const ci = d.compases.findIndex(([p, x, y, w, h]) => p === pg && px >= x && px <= x + w && py >= y - holgura && py <= y + h + holgura);
+  if (ci < 0) return;
+  // Si el compás suena más de una vez (repetición), elige la vez más cercana al punto actual.
+  let mejor = -1;
+  d.eventos.forEach(([c, t], i) => {
+    if (c === ci && (mejor < 0 || Math.abs(t - motor.tiempo) < Math.abs(d.eventos[mejor][1] - motor.tiempo))) mejor = i;
+  });
+  if (mejor < 0) return;
+  const [, x, , w] = d.compases[ci];
+  const inicio = d.eventos[mejor][1];
+  const f = Math.max(0, Math.min(1, (px - x) / w));
+  desplazamientoManual = performance.now(); // no saltar la vista justo después del clic
+  motor.buscar(inicio + f * (finDeEvento(mejor) - inicio));
+  actualizarCabezal();
+}
+
+$('#boton-ver-ondas').addEventListener('click', cerrarPartitura);
+window.addEventListener('resize', () => { if (partitura) ajustarAltoPartitura(); });
 
 function bucle() {
   if (motor.reproduciendo) actualizarCabezal();
@@ -375,6 +546,7 @@ async function enrutar() {
     transporte.hidden = false;
     abrirCancion(decodeURIComponent(m[1]));
   } else {
+    if (partitura) cerrarPartitura();
     if (motor.pistas.length) { motor.descargar(); cancionActual = null; cargaId++; }
     vistas.reproductor.hidden = true;
     transporte.hidden = true;
