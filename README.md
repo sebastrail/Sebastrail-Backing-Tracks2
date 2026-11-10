@@ -68,6 +68,22 @@ locator: 6 × 60/108 = 3,3333 s). Los tiempos del `.mpos` siguen el tempo de
 MuseScore con las repeticiones desplegadas, así que la partitura debe ser la
 misma versión que el MIDI de Ableton.
 
+**Canciones con cambios de tempo, rampas o calderones** (ej. Flood): en vez de
+un desfase fijo, se usa el mapa de tempo real del set de Ableton.
+
+```bash
+herramientas/mpos-sin-calderones.sh flood.mscz sc/flood.mpos      # general, sin calderones
+herramientas/mpos-sin-calderones.sh piano.mscz sc/piano.mpos      # cada parte, igual
+ruby herramientas/mapa-tiempos.rb flood.mscz sc/flood.mpos "EN VIVO - ALS.als" 10544 10552 mapa.json
+#   10544 = pulso del locator (inicio del stem) · 10552 = pulso donde empiezan los clips MIDI
+ruby herramientas/preparar-partitura.rb piano.mpos mapa.json canciones/flood/partituras piano piano-*.svg
+```
+
+MuseScore alarga los calderones y Ableton no, y una parte puede tenerlos
+mientras otra no. Por eso los tiempos salen de copias sin calderones; la
+geometría y las páginas, del original (en Flood las posiciones de compás son
+idénticas). Ordena las páginas por número (`-10.svg` va después de `-9.svg`).
+
 ## Ver en local
 
 `fetch` no funciona abriendo `index.html` con doble clic; hace falta un
