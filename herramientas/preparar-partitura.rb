@@ -23,7 +23,21 @@ FACTOR = 12.0
 compases = x.scan(/<element id="(\d+)" x="([\d.]+)" y="([\d.]+)" sx="([\d.]+)" sy="([\d.]+)" page="(\d+)"/).map do |i, cx, cy, w, h, pg|
   [pg.to_i, *[cx, cy, w, h].map { |v| (v.to_f / FACTOR).round(1) }]
 end
-eventos = x.scan(/<event elid="(\d+)" position="(\d+)"/).map { |e, ms| [e.to_i, (ms.to_i / 1000.0 + desfase).round(3)] }
+# Segundo argumento: un número (desfase fijo, tempo idéntico en MuseScore y
+# Ableton) o un mapa .json de mapa-tiempos.rb (tempo real del set).
+if File.file?(ARGV[1])
+  mapa = JSON.parse(File.read(ARGV[1]))
+  a_audio = lambda do |t|
+    i = mapa.rindex { |m, _| m <= t + 1e-6 } || 0
+    m0, a0 = mapa[i]
+    m1, a1 = mapa[i + 1] || [m0 + 1, a0 + 1]
+    a0 + (t - m0) * (a1 - a0) / (m1 - m0)
+  end
+  desfase = mapa.first[1] - mapa.first[0]
+else
+  a_audio = ->(t) { t + desfase }
+end
+eventos = x.scan(/<event elid="(\d+)" position="(\d+)"/).map { |e, ms| [e.to_i, a_audio.(ms.to_i / 1000.0).round(3)] }
 
 svg1 = File.read(paginas.first, encoding: 'UTF-8')
 vb = svg1[/viewBox="([^"]+)"/, 1].split.map(&:to_f)
@@ -32,7 +46,8 @@ FileUtils.mkdir_p(destino)
 nombres = paginas.each_with_index.map do |p, i|
   n = "#{id}-#{i + 1}.svg"
   # Sin saltos de línea ni comentarios: pesa menos.
-  s = File.read(p, encoding: 'UTF-8').gsub(/<!--.*?-->/m, '').gsub(/>\s+</, '><')
+  # Coordenadas con 1 decimal (1/12000 de pulgada): invisible y ~20 % más liviano.
+  s = File.read(p, encoding: 'UTF-8').gsub(/<!--.*?-->/m, '').gsub(/>\s+</, '><').gsub(/(\d\.\d)\d+/, '\1')
   File.write(File.join(destino, n), s)
   n
 end
